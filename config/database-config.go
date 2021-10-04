@@ -41,8 +41,4 @@ func CloseDatabaseConnection(db *gorm.DB) {
 	dbSQL.Close()
 }
 
-// authRouters := r.Group("api/auth")
-// {
-// 	authRouters.POST("/login")
-// 	authRouters.POST("/register")
-// }
+//

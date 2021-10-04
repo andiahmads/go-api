@@ -17,6 +17,7 @@ func main() {
 	authRouters := r.Group("api/auth")
 	{
 		authRouters.POST("/login", authController.Login)
+
 		authRouters.POST("/register", authController.Register)
 	}
 
