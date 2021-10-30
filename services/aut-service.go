@@ -48,6 +48,7 @@ func (service *authService) CreateUser(user dto.RegisterDTO) entity.User {
 	}
 	res := service.userRepository.InsertUser(userToCreate)
 	return res
+
 }
 
 func (service *authService) FindByEmail(email string) entity.User {

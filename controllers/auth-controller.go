@@ -17,6 +17,7 @@ import (
 type AuthController interface {
 	Login(ctx *gin.Context)
 	Register(ctx *gin.Context)
+	Logout(ctx *gin.Context)
 }
 
 type authController struct {
@@ -44,7 +45,9 @@ func (c *authController) Login(ctx *gin.Context) {
 	authResult := c.authService.VerifyCredential(loginDTO.Email, loginDTO.Password)
 	if v, ok := authResult.(entity.User); ok {
 		generateToken := c.jwtService.GenerateToken(strconv.FormatUint(v.ID, 10))
+		refreshToken := c.jwtService.RefreshToken(strconv.FormatUint(v.ID, 10))
 		v.Token = generateToken
+		v.RefreshToken = refreshToken
 		response := helpers.BuildResponse(true, "OK!", v)
 		ctx.JSON(http.StatusOK, response)
 		return
@@ -76,5 +79,9 @@ func (c *authController) Register(ctx *gin.Context) {
 		response := helpers.BuildResponse(true, "ok!", createdUser)
 		ctx.AbortWithStatusJSON(http.StatusCreated, response)
 	}
+
+}
+
+func (c *authController) Logout(ctx *gin.Context) {
 
 }

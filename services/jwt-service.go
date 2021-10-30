@@ -12,6 +12,7 @@ import (
 type JWTService interface {
 	GenerateToken(userID string) string
 	ValidateToken(token string) (*jwt.Token, error)
+	RefreshToken(token string) string
 }
 
 type jwtCustomClaim struct {
@@ -27,7 +28,7 @@ type jwtService struct {
 //NEWJWTService method is created a new instance of JWTService.
 func NewJWTService() JWTService {
 	return &jwtService{
-		issuer:    "ydhnwb",
+		issuer:    "andiahmad",
 		secretKey: getSecretKey(),
 	}
 }
@@ -54,7 +55,23 @@ func (j *jwtService) GenerateToken(UserID string) string {
 	if err != nil {
 		panic(err)
 	}
+
 	return t
+
+}
+
+func (j *jwtService) RefreshToken(token string) string {
+	refreshToken := jwt.New(jwt.SigningMethodHS256)
+	rtClaims := refreshToken.Claims.(jwt.MapClaims)
+	rtClaims["sub"] = 1
+	rtClaims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	rt, err := refreshToken.SignedString([]byte(j.secretKey))
+	if err != nil {
+		panic(err)
+
+	}
+
+	return rt
 }
 
 func (j *jwtService) ValidateToken(token string) (*jwt.Token, error) {

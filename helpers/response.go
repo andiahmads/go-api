@@ -10,6 +10,11 @@ type Response struct {
 	Data    interface{} `json:"data"`
 }
 
+type AppError struct {
+	Code    int    `json:"code,omitempty"`
+	Message string `json:"message"`
+}
+
 //EmptyObj object is used  when data dosn't want to be null on json'
 type EmptyObj struct{}
 
@@ -37,3 +42,4 @@ func BuildErrorResponse(message string, err string, data interface{}) Response {
 	return res
 
 }
+
