@@ -31,7 +31,7 @@ func NewJWTService() JWTService {
 		issuer:    "andiahmad",
 		secretKey: getSecretKey(),
 	}
-}
+}	
 
 func getSecretKey() string {
 	secretKey := os.Getenv("JWT_SECRET_KEY")

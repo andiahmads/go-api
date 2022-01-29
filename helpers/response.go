@@ -15,6 +15,8 @@ type AppError struct {
 	Message string `json:"message"`
 }
 
+
+
 //EmptyObj object is used  when data dosn't want to be null on json'
 type EmptyObj struct{}
 

@@ -49,6 +49,7 @@ func main() {
 		bookRouters.GET("/:id", bookController.FindByID)
 		bookRouters.PUT("/:id", bookController.Update)
 		bookRouters.DELETE("/:id", bookController.Delete)
+		bookRouters.GET("/pagination", bookController.Pagination)
 	}
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

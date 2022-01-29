@@ -12,3 +12,23 @@ type BookCreateDTO struct {
 	Description string `json:"description" form:"description" binding:"required"`
 	UserID      uint64 `json:"user_id,omitempty"  form:"user_id,omitempty"`
 }
+
+type BookPaginationMeta struct {
+	Limit        int         `json:"limit"`
+	Page         int         `json:"page"`
+	Sort         string      `json:"sort"`
+	TotalRows    int         `json:"total_rows"`
+	FirstPage    string      `json:"first_page"`
+	PreviousPage string      `json:"previous_page"`
+	NextPage     string      `json:"next_page"`
+	LastPage     string      `json:"last_page"`
+	FromRow      int         `json:"from_row"`
+	ToRow        int         `json:"to_row"`
+	Rows         interface{} `json:"rows"`
+}
+
+type ResponsePaginate struct {
+	Success bool        `json:"success"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}

@@ -19,6 +19,7 @@ type BookController interface {
 	Insert(context *gin.Context)
 	Update(context *gin.Context)
 	Delete(context *gin.Context)
+	Pagination(context *gin.Context)
 }
 
 type bookController struct {
@@ -153,4 +154,14 @@ func (c *bookController) getUserIDByToken(token string) string {
 	id := fmt.Sprintf("%v", claims["user_id"])
 
 	return id
+}
+
+func (c *bookController) Pagination(context *gin.Context) {
+	code := http.StatusOK
+	pagination := helpers.GeneratePagination(context)
+	response := c.bookService.AllbookWithPagination(context, pagination)
+	if !response.Success {
+		code = http.StatusBadRequest
+	}
+	context.JSON(code, response)
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/andiahmads/go-api/dto"
 	"github.com/andiahmads/go-api/entity"
 	"github.com/andiahmads/go-api/repository"
+	"github.com/gin-gonic/gin"
 	"github.com/mashingan/smapping"
 )
 
@@ -17,6 +18,7 @@ type BookService interface {
 	All() []entity.Book
 	FindByID(bookID uint64) entity.Book
 	IsAllowedToEdit(userID string, bookID uint64) bool
+	AllbookWithPagination(context *gin.Context, pagination *dto.BookPaginationMeta) *dto.ResponsePaginate
 }
 
 type bookService struct {
@@ -65,4 +67,35 @@ func (service *bookService) IsAllowedToEdit(userID string, bookID uint64) bool {
 	b := service.bookRepository.FindBookByID(bookID)
 	id := fmt.Sprintf("%v", b.UserID)
 	return userID == id
+}
+
+func (service *bookService) AllbookWithPagination(context *gin.Context, pagination *dto.BookPaginationMeta) *dto.ResponsePaginate {
+	operationResult, totalPages := service.bookRepository.AllbookWithPagination(pagination)
+
+	if operationResult.Error != nil {
+		return &dto.ResponsePaginate{Success: false, Message: operationResult.Error.Error()}
+	}
+	var data = operationResult.Result.(*dto.BookPaginationMeta)
+
+	urlPath := context.Request.URL.Path
+
+	data.FirstPage = fmt.Sprintf("%s?limit=%d&page=%d&sort=%s", urlPath, pagination.Limit, 0, pagination.Sort)
+	data.LastPage = fmt.Sprintf("%s?limit=%d&page=%d&sort=%s", urlPath, pagination.Limit, totalPages, pagination.Sort)
+
+	if data.Page > 0 {
+		// set previus page query parameter
+		data.PreviousPage = fmt.Sprintf("%s?limit=%d&page=%d&sort=%s", urlPath, pagination.Limit, data.Page-1, pagination.Sort)
+	}
+	if data.Page < totalPages {
+		//set next page pagination response
+		data.NextPage = fmt.Sprintf("%s?limit=%d&page=%d&sort=%s", urlPath, pagination.Limit, data.Page+1, pagination.Sort)
+	}
+
+	if data.Page > totalPages {
+		//reset previus page
+		data.PreviousPage = ""
+	}
+
+	return &dto.ResponsePaginate{Success: true, Data: data}
+
 }
