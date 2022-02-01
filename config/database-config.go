@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"runtime"
 
 	"github.com/andiahmads/go-api/entity"
 	"github.com/joho/godotenv"
@@ -12,11 +14,14 @@ import (
 
 //SETUP DATABASE, CREATE CONNECTION
 func SetupDatabaseConnection() *gorm.DB {
-	errEnv := godotenv.Load()
-	if errEnv != nil {
-		panic("Failed to load env file")
-	}
+	_, b, _, _ := runtime.Caller(0)
+	basepath := filepath.Dir(b)
+	fmt.Println(basepath)
+	err := godotenv.Load(fmt.Sprintf("%s/../.env", basepath))
 
+	if err != nil {
+		panic("Failed, env not found!")
+	}
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASS")
 	dbHost := os.Getenv("DB_HOST")
@@ -29,7 +34,7 @@ func SetupDatabaseConnection() *gorm.DB {
 	}
 	//nanti kita isi modelnya di sini
 	// db.AutoMigrate()
-	db.AutoMigrate(&entity.Book{}, &entity.User{})
+	db.AutoMigrate(&entity.Book{}, &entity.User{}, &entity.Categories{})
 	return db
 }
 

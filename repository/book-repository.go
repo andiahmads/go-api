@@ -16,6 +16,7 @@ type BookRepository interface {
 	AllBook() []entity.Book
 	FindBookByID(bookID uint64) entity.Book
 	AllbookWithPagination(pagination *dto.BookPaginationMeta) (RepositoryResult, int)
+	GetBookWithInnerJoin() interface{}
 }
 type bookConnection struct {
 	connection *gorm.DB
@@ -65,7 +66,7 @@ func (db *bookConnection) AllbookWithPagination(pagination *dto.BookPaginationMe
 
 	offset := pagination.Page * pagination.Limit
 
-	errFind := db.connection.Limit(pagination.Limit).Offset(offset).Order(pagination.Sort).Preload("User").Find(&books).Error
+	errFind := db.connection.Limit(pagination.Limit).Offset(offset).Order(pagination.Sort).Joins("User").Find(&books).Error
 
 	if errFind != nil {
 		// panic(errFind.Error())
@@ -98,4 +99,18 @@ func (db *bookConnection) AllbookWithPagination(pagination *dto.BookPaginationMe
 	pagination.FromRow = fromRow
 	pagination.ToRow = toRow
 	return RepositoryResult{Result: pagination}, totalPages
+}
+
+func (db *bookConnection) GetBookWithInnerJoin() interface{} {
+
+	var result []dto.GetBookWithCategory
+	// query := `SELECT books.id,title,description,categories.category FROM books INNER JOIN categories ON categories.id = books.category_id`
+
+	// db.connection.Raw(query).Scan(&result)
+	db.connection.Table("books").
+		Select("books.id,books.title,books.description,categories.category").
+		Joins("INNER JOIN categories ON categories.id = books.category_id").Scan(&result)
+
+	return result
+
 }

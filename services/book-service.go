@@ -6,6 +6,7 @@ import (
 
 	"github.com/andiahmads/go-api/dto"
 	"github.com/andiahmads/go-api/entity"
+	"github.com/andiahmads/go-api/helpers"
 	"github.com/andiahmads/go-api/repository"
 	"github.com/gin-gonic/gin"
 	"github.com/mashingan/smapping"
@@ -19,6 +20,7 @@ type BookService interface {
 	FindByID(bookID uint64) entity.Book
 	IsAllowedToEdit(userID string, bookID uint64) bool
 	AllbookWithPagination(context *gin.Context, pagination *dto.BookPaginationMeta) *dto.ResponsePaginate
+	GetAllBookWithCategory() *helpers.CustomeResponse
 }
 
 type bookService struct {
@@ -97,5 +99,11 @@ func (service *bookService) AllbookWithPagination(context *gin.Context, paginati
 	}
 
 	return &dto.ResponsePaginate{Success: true, Data: data}
+
+}
+
+func (service *bookService) GetAllBookWithCategory() *helpers.CustomeResponse {
+	res := service.bookRepository.GetBookWithInnerJoin()
+	return &helpers.CustomeResponse{Success: true, Message: "success", Data: res}
 
 }

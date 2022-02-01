@@ -11,6 +11,7 @@ type BookCreateDTO struct {
 	Title       string `json:"title" form:"title" binding:"required"`
 	Description string `json:"description" form:"description" binding:"required"`
 	UserID      uint64 `json:"user_id,omitempty"  form:"user_id,omitempty"`
+	CategoryID  uint64 `json:"category_id,omitempty"  form:"categoy_id"`
 }
 
 type BookPaginationMeta struct {
@@ -31,4 +32,11 @@ type ResponsePaginate struct {
 	Success bool        `json:"success"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
+}
+
+type GetBookWithCategory struct {
+	ID          uint64 `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Category    string `json:"category"`
 }

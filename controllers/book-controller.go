@@ -15,6 +15,7 @@ import (
 
 type BookController interface {
 	All(context *gin.Context)
+	GetAllBookWithCategory(context *gin.Context)
 	FindByID(context *gin.Context)
 	Insert(context *gin.Context)
 	Update(context *gin.Context)
@@ -164,4 +165,15 @@ func (c *bookController) Pagination(context *gin.Context) {
 		code = http.StatusBadRequest
 	}
 	context.JSON(code, response)
+}
+
+func (c *bookController) GetAllBookWithCategory(context *gin.Context) {
+	//isi book dalam bentuk array
+	code := http.StatusOK
+	response := c.bookService.GetAllBookWithCategory()
+	if !response.Success {
+		code = http.StatusBadRequest
+	}
+	context.JSON(code, response)
+
 }
